@@ -5,7 +5,7 @@ from torchvision.models.video import r3d_18, R3D_18_Weights
 from torchvision.transforms import functional as TF
 from torchvision.io.video import read_video
 from torchsummary import summary
-from utils import new_model
+from utils import new_model,plot_video_frames
 
 i3d_model = new_model(output_layer='layer4')
 
@@ -35,6 +35,8 @@ for frame in video_tensor:
 
 preprocessed_video = torch.stack(resized_frames)  # Shape: (T, C, H, W)
 
+print("Preprocessed video shape:",preprocessed_video.shape)
+plot_video_frames(preprocessed_video)
 # Rescale and normalize the preprocessed video frames
 rescaled_video = preprocessed_video / 255.0
 
@@ -73,7 +75,7 @@ feature_maps = features.squeeze().numpy()  # Shape: (512, 21, 7, 7)
 
 # Define the number of feature maps and filters per map
 num_feature_maps = feature_maps.shape[1]
-num_filters_per_map = min(feature_maps.shape[0], 50)  # Limit to 10 filters per feature map
+num_filters_per_map = min(feature_maps.shape[0], 5)  # Limit to 10 filters per feature map
 
 # Plot feature maps using a grid layout
 grid_size = (num_filters_per_map, num_feature_maps)
