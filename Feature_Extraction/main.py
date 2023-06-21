@@ -34,7 +34,7 @@ print("Preprocessed video shape:",preprocessed_video.shape)
 #plot_video_frames(preprocessed_video)
 # Rescale and normalize the preprocessed video frames
 rescaled_video = preprocessed_video / 255.0
-
+plot_video_frames(rescaled_video)
 # Verify the shape of rescaled_video
 print("Rescaled video shape:", rescaled_video.shape)
 

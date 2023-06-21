@@ -27,10 +27,10 @@ class new_model(nn.Module):
 
 def plot_video_frames(video_frames):
     # Select the first 20 frames
-    frames = video_frames[:10]
+    frames = video_frames[:20]
 
     # Create a figure with a grid plot
-    fig, axs = plt.subplots(2, 5, figsize=(10, 10))
+    fig, axs = plt.subplots(4, 5, figsize=(10, 10))
 
     # Iterate over the frames and plot them
     for i, frame in enumerate(frames):
@@ -38,6 +38,7 @@ def plot_video_frames(video_frames):
         ax = axs[i // 5, i % 5]
         ax.imshow(frame.permute(1, 2, 0))
         ax.axis('off')
+        ax.set_title(f"Frame {i+1}")
 
     # Adjust the spacing and display the plot
     plt.subplots_adjust(hspace=0.3)
