@@ -42,3 +42,33 @@ def plot_video_frames(video_frames):
     # Adjust the spacing and display the plot
     plt.subplots_adjust(hspace=0.3)
     plt.show()
+def plot_output_featur_map(features):
+    # Plot feature maps using a grid layout
+    # feature dimention is [ 512, 21, 7 , 7]
+
+    # Extract the feature maps from the model
+    feature_maps = features.squeeze().numpy()  # Shape: (512, 21, 7, 7)
+
+    # Define the number of feature maps and filters per map
+    num_feature_maps = feature_maps.shape[1]
+    num_filters_per_map = min(feature_maps.shape[0], 5)  # Limit to 10 filters per feature map
+
+    # Plot feature maps using a grid layout
+    grid_size = (num_filters_per_map, num_feature_maps)
+    fig, axes = plt.subplots(*grid_size, figsize=(10, 10))
+
+    for i in range(num_feature_maps):
+        for j in range(num_filters_per_map):
+            axes[j, i].imshow(feature_maps[j, i], cmap='gray')
+            axes[j, i].axis('off')
+            axes[j, i].set_title(f'F {j + 1}')
+
+    plt.subplots_adjust(wspace=0, hspace=0)
+    plt.show()
+
+def VisualizeR3D_Model():
+    children_counter = 0
+    model = r3d_18(weights=R3D_18_Weights.DEFAULT)
+    for n,c in model.named_children():
+       print("Children Counter: ",children_counter," Layer Name: ",n,)
+       children_counter+=1
