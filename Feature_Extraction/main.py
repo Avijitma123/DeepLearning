@@ -54,19 +54,25 @@ print("Input Tensor:", input_tensor.shape)
 # Pass the video frames through the I3D model
 with torch.no_grad():
     features = i3d_model(input_tensor)  # Extract features from the stem module
-
-
-
 # summary(i3d_model, input_size=(3, 164, 112, 112))
-print("Feature vector shape:", features.shape)
+print("Output Feature vector shape:", features.shape)
+
+
+
+input_dim=features.shape
 #=========================Feature Pyramid Network=========================
+in_channels = input_dim[1]
+out_channels = 256
+num_tcm_blocks = input_dim[2] - 1
+
 # Create an instance of the encoder
-encoder = Encoder(num_levels=4)
-# Pass the input feature through the encoder
-output_feature_pyramid = encoder(features)
-# Print the shapes of the feature pyramid levels
-for i, level in enumerate(output_feature_pyramid):
-    print(f"Level {i+1}: {level.shape}")
+encoder = Encoder(in_channels, out_channels, num_tcm_blocks)
+
+
+
+# Forward pass through the encoder
+output_tensor = encoder(features)
+
 
 
 
