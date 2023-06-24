@@ -3,9 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.models.video import r3d_18, R3D_18_Weights
 from torchvision.transforms import functional as TF
+
 from torchvision.io.video import read_video
 from torchsummary import summary
-from utils import new_model,plot_video_frames
+from utils import new_model,plot_video_frames,plot_output_featur_map
+from Encoder import Encoder
 
 i3d_model = new_model(output_layer='layer4')
 
@@ -13,7 +15,7 @@ i3d_model = new_model(output_layer='layer4')
 i3d_model.eval()
 
 # Define the video path
-video_path = "video1.avi"
+video_path = "untrimmed_video1.mp4"
 
 # Read the video frames
 video_frames, audio, info = read_video(video_path, pts_unit="sec")  # Returns frames in shape (T, H, W, C)
@@ -57,7 +59,14 @@ with torch.no_grad():
 
 # summary(i3d_model, input_size=(3, 164, 112, 112))
 print("Feature vector shape:", features.shape)
-print("Feature vector:", features)
+#=========================Feature Pyramid Network=========================
+# Create an instance of the encoder
+encoder = Encoder(num_levels=4)
+# Pass the input feature through the encoder
+output_feature_pyramid = encoder(features)
+# Print the shapes of the feature pyramid levels
+for i, level in enumerate(output_feature_pyramid):
+    print(f"Level {i+1}: {level.shape}")
 
 
 

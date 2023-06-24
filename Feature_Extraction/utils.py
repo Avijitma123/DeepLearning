@@ -51,7 +51,7 @@ def plot_output_featur_map(features):
     feature_maps = features.squeeze().numpy()  # Shape: (512, 21, 7, 7)
 
     # Define the number of feature maps and filters per map
-    num_feature_maps = feature_maps.shape[1]
+    num_feature_maps = feature_maps.shape[1]-260
     num_filters_per_map = min(feature_maps.shape[0], 5)  # Limit to 10 filters per feature map
 
     # Plot feature maps using a grid layout
