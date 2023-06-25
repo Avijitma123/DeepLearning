@@ -18,7 +18,7 @@ class Transformer(nn.Module):
                dropout=0,
                device="cuda",
                max_length=100):
-        super(Transformer,self).__init__()
+        super(Transformer, self).__init__()
         self.encoder = Encoder(src_vocab_size,
                                embed_size,
                                num_layers,
