@@ -35,7 +35,6 @@ class Transformer(nn.Module):
                                device,
                                max_length
                               )
-
         self.src_pad_idx = src_pad_idx
         self.trg_pad_idx = trg_pad_idx
         self.device = device
