@@ -1,4 +1,5 @@
 from SelfAttention import  SelfAttention
+from Transformer import  Transformer
 import torch
 
 # Word embeddings for the sequence of words
