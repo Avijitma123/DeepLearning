@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from Transformer_Block import TransformerBlock
+
 from Encoder import Encoder
 from Decoder import Decoder
 
@@ -15,7 +15,7 @@ class Transformer(nn.Module):
                num_layers=6,
                forward_expansion = 4,
                heads=8,
-               dropout=0,
+               dropout=0.2,
                device="cuda",
                max_length=100):
         super(Transformer, self).__init__()
@@ -25,9 +25,11 @@ class Transformer(nn.Module):
                                heads,
                                forward_expansion,
                                dropout,
+                               device,
                                max_length
                                )
-        self.decoder = Decoder(trg_vocab_size,embed_size,
+        self.decoder = Decoder(trg_vocab_size,
+                               embed_size,
                                num_layers,
                                heads,
                                forward_expansion,
@@ -35,6 +37,7 @@ class Transformer(nn.Module):
                                device,
                                max_length
                               )
+
         self.src_pad_idx = src_pad_idx
         self.trg_pad_idx = trg_pad_idx
         self.device = device
