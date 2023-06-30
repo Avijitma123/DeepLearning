@@ -10,7 +10,13 @@ i3d_model = r3d_18(weights=R3D_18_Weights.DEFAULT)
 # Set the model to evaluation mode
 i3d_model.eval()
 
-
+"""
+The video is divided into k-frame clips using the torch.split() function, 
+and then each clip is passed through the I3D model to extract features. 
+The extracted features for each clip are stored in a list, and at the end, 
+all the features are stacked into a single tensor using torch.stack(). 
+The shape of the features tensor is printed along with the feature values.
+"""
 class Extract:
     def __init__(self,number_clips):
         self.number_clips = number_clips
