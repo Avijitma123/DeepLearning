@@ -1,15 +1,11 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torchvision.models.video import r3d_18, R3D_18_Weights
 from torchvision.transforms import functional as TF
-
 from torchvision.io.video import read_video
-from torchsummary import summary
-from utils import new_model,plot_video_frames,plot_output_featur_map
-from Encoder import Encoder
 
-i3d_model = new_model(output_layer='layer3')
+# Load the pretrained I3D model
+i3d_model = r3d_18(weights=R3D_18_Weights.DEFAULT)
 
 # Set the model to evaluation mode
 i3d_model.eval()
@@ -32,11 +28,9 @@ for frame in video_tensor:
 
 preprocessed_video = torch.stack(resized_frames)  # Shape: (T, C, H, W)
 
-print("Preprocessed video shape:",preprocessed_video.shape)
-#plot_video_frames(preprocessed_video)
 # Rescale and normalize the preprocessed video frames
 rescaled_video = preprocessed_video / 255.0
-plot_video_frames(rescaled_video)
+
 # Verify the shape of rescaled_video
 print("Rescaled video shape:", rescaled_video.shape)
 
@@ -47,33 +41,31 @@ std = rescaled_video.std(dim=[0, 2, 3])
 # Normalize the video frames
 normalized_video = TF.normalize(rescaled_video, mean=mean, std=std)
 
-# Permute the dimensions of the video tensor
-input_tensor = normalized_video.permute(1, 0, 2, 3).unsqueeze(0)  # Shape: (1, T, C, H, W)
-print("Input Tensor:", input_tensor.shape)
+# Divide the video into 16-frame clips
+clip_length = 16
+num_frames = normalized_video.shape[0]
+num_clips = num_frames // clip_length
 
-# Pass the video frames through the I3D model
-with torch.no_grad():
-    features = i3d_model(input_tensor)  # Extract features from the stem module
-# summary(i3d_model, input_size=(3, 164, 112, 112))
-print("Output Feature vector shape:", features.shape)
+clips = torch.split(normalized_video[:num_clips * clip_length], clip_length)
 
+# Extract features for each clip
+features = []
+for clip in clips:
+    # Permute the dimensions of the video tensor
+    input_tensor = clip.permute(1, 0, 2, 3).unsqueeze(0)  # Shape: (1, T, C, H, W)
 
+    # Pass the video frames through the I3D model
+    with torch.no_grad():
+        clip_features = i3d_model.stem(input_tensor)  # Extract features from the stem module
 
-input_dim=features.shape
-#=========================Feature Pyramid Network=========================
-in_channels = input_dim[1]
-out_channels = 256
-num_tcm_blocks = input_dim[2] - 1
+    # Apply adaptive average pooling to obtain the feature vector
+    adaptive_avg_pool = nn.AdaptiveAvgPool3d((1, 1, 1))
+    clip_feature_vector = adaptive_avg_pool(clip_features).squeeze()  # Shape: (C,)
 
-# Create an instance of the encoder
-encoder = Encoder(in_channels, out_channels, num_tcm_blocks)
+    features.append(clip_feature_vector)
 
+# Stack the extracted features
+features = torch.stack(features)
 
-
-# Forward pass through the encoder
-output_tensor = encoder(features)
-
-
-
-
-
+print("Features shape:", features.shape)
+print("Features:", features)
