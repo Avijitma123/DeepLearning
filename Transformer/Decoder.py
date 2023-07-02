@@ -2,13 +2,15 @@ import torch.nn as nn
 import torch
 from SelfAttention import SelfAttention
 from Transformer_Block import Transformer_Block
+from torch import arange
 class DecoderBlock(nn.Module):
     def __init__(self,embed_size, heads, forward_expansion, dropout, device):
         super(DecoderBlock, self). __init__()
-        self.attention = SelfAttention(embed_size)
+        self.attention = SelfAttention(embed_size,heads)
         self.norm = nn.LayerNorm(embed_size)
+        self.device = device
         self.transformer_block = Transformer_Block(
-            embed_size, heads, dropout, forward_expansion
+            embed_size, heads, dropout, forward_expansion,device
         )
 
         self.dropout = nn.Dropout(dropout)
@@ -41,7 +43,7 @@ class Decoder(nn.Module):
         self.dropout = nn.Dropout(dropout)
     def forward(self, x, enc_out, src_mask, trg_mask):
         N, seq_length = x.shape
-        positions = torch.arrange(0, seq_length).expand(N,seq_length).to(self.device)
+        positions = torch.arange(0, seq_length).expand(N,seq_length).to(self.device)
         x = self.dropout((self.word_embedding(x))+ self.position_embedding(positions))
 
         for layer in self.layers:

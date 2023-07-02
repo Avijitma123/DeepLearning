@@ -1,17 +1,24 @@
 import torch
-from SelfAttention import SelfAttention
 from Transformer import Transformer
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-x = torch.tensor([[1,5,7,8],[2,4,6,7]]).to(device)
-trg = torch.tensor([[1,3,5],[6,7,3]]).to(device)
+# Input data
+sequence_length = 100
+embed_size = 512
+src_vocab_size = 10000
+trg_vocab_size = 10000
 src_pad_idx = 0
 trg_pad_idx = 0
-src_vocab_size = 10
-trg_vocab_size = 10
 
-model = Transformer(src_vocab_size,trg_vocab_size,src_pad_idx,trg_pad_idx).to(device)
-out = model(x,trg[:,:-1])
-print(out.shape)
+# Generate random input sequence
+input_sequence = torch.randint(low=1, high=src_vocab_size, size=(1, sequence_length)).to(device)
+embed_size = int(embed_size)
+# Initialize the Transformer model
+model = Transformer(src_vocab_size, trg_vocab_size, src_pad_idx, trg_pad_idx, embed_size=embed_size).to(device)
 
+# Pass the input sequence through the model
+output = model(input_sequence, input_sequence)
+
+print("Input shape:", input_sequence.shape)
+print("Output shape:", output.shape)

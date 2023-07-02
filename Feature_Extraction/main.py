@@ -9,6 +9,8 @@ feature_extractor = Extract(16)
 
 extracted_feature=feature_extractor.get_feature(video_path)
 
+
+print("=========Feature vectors============")
 print(extracted_feature)
 
 
