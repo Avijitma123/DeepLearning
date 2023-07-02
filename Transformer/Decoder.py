@@ -3,6 +3,10 @@ import torch
 from SelfAttention import SelfAttention
 from Transformer_Block import Transformer_Block
 from torch import arange
+
+"""
+    Here I hvae implemented decoder block
+"""
 class DecoderBlock(nn.Module):
     def __init__(self,embed_size, heads, forward_expansion, dropout, device):
         super(DecoderBlock, self). __init__()
