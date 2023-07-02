@@ -14,11 +14,13 @@ trg_pad_idx = 0
 # Generate random input sequence
 input_sequence = torch.randint(low=1, high=src_vocab_size, size=(1, sequence_length)).to(device)
 embed_size = int(embed_size)
+
 # Initialize the Transformer model
 model = Transformer(src_vocab_size, trg_vocab_size, src_pad_idx, trg_pad_idx, embed_size=embed_size).to(device)
 
 # Pass the input sequence through the model
 output = model(input_sequence, input_sequence)
 
+# Print the shapes of input and output
 print("Input shape:", input_sequence.shape)
 print("Output shape:", output.shape)
